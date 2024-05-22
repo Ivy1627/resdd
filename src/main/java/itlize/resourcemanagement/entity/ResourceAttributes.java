@@ -1,5 +1,6 @@
 package itlize.resourcemanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,6 +9,7 @@ public class ResourceAttributes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private Long id;
 
     @Column(name = "col_name")
@@ -40,5 +42,13 @@ public class ResourceAttributes {
 
     public void setRes(Resource res){
         this.res = res;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public Resource getRes() {
+        return this.res;
     }
 }

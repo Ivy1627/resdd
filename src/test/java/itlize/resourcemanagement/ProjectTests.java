@@ -25,27 +25,42 @@ public class ProjectTests {
     @Test
     void testCreateProject(){
         Project newProj = new Project();
-        newProj.setProjName("Project1");
-        User user = ur.findByUsername("Ivy");
+        newProj.setProjName("Project 5");
+        User user = ur.findByUsername("John");
         newProj.setUser(user);
-        boolean result = ps.createProject(newProj, user);
+        boolean result = ps.createProject(newProj);
         assertTrue(result);
 
         // Verify that the res was saved
-        Project savedProj = pr.findByProjName("Project1").orElse(null);
+        Project savedProj = pr.findByProjName("Project 5").orElse(null);
         assertNotNull(savedProj);
-        assertEquals("Project1", savedProj.getProjName());
+        assertEquals("Project 5", savedProj.getProjName());
 
         // Test case: Trying to create the same project again
-        result = ps.createProject(newProj, user);
+        result = ps.createProject(newProj);
         assertFalse(result);
     }
 
     @Test
-    void testUpdateProject(){}
+    void testUpdateProject(){
+        Project proj = new Project();
+        proj.setUser(ur.findByUsername("Ivy"));
+        proj.setProjName("Project 2");
+        pr.save(proj);
+        String newProjName = "Project 3";
+        Project updatedProj = ps.updateProject(proj, newProjName);
+        assertEquals(newProjName, updatedProj.getProjName());
+    }
 
     @Test
-    void testDeleteProject(){}
+    void testDeleteProject(){
+        Project proj = new Project();
+        proj.setUser(ur.findByUsername("Ivy"));
+        proj.setProjName("Project 5");
+        pr.save(proj);
+        boolean res = ps.deleteProject(proj);
+        assertTrue(res);
+    }
 
 
 }

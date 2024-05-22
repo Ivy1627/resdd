@@ -1,8 +1,16 @@
 package itlize.resourcemanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -10,6 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private Long id;
 
     @Column(name = "username", unique = true)
@@ -19,10 +28,15 @@ public class User {
     private String password;
 
     @Column(name = "creation_time")
-    private ZonedDateTime creationTime;
+    @CreationTimestamp
+    private Instant creationTime;
 
     @Column(name = "last_modification_time")
-    private ZonedDateTime lastModificationTime;
+    @UpdateTimestamp
+    private Instant lastModificationTime;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Project> projects;
 
     public User(){}
 
@@ -34,9 +48,11 @@ public class User {
         return this.password;
     }
 
-    public Long getUserId() {
+    public Long getId() {
         return this.id;
     }
+
+    public Instant getCreationTime() {return this.creationTime;}
 
     public void setUser(String username, String password) {
         this.username = username;

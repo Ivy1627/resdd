@@ -20,16 +20,16 @@ public class UserTests {
     void testCreateUser() {
         // Create a new user
         User newUser = new User();
-        newUser.setUser("Ivy", "123456");
+        newUser.setUser("Joshua", "87600543");
 
         // Test case: Creating a new user
         boolean result = us.createUser(newUser);
         assertTrue(result);
 
         // Verify that the user was saved
-        User savedUser = ur.findByUsername("Ivy");
+        User savedUser = ur.findByUsername("Joshua");
         assertNotNull(savedUser);
-        assertEquals("Ivy", savedUser.getUsername());
+        assertEquals("Joshua", savedUser.getUsername());
 
         // Test case: Trying to create the same user again
         result = us.createUser(newUser);
@@ -38,16 +38,16 @@ public class UserTests {
 
     @Test
     void TestUpdatePassword(){
-        User updatedUser = us.updatePassword("Ivy", "123123");
-
-        assertNotNull(updatedUser);
-        assertEquals("123123", updatedUser.getPassword());
+        boolean success = us.updatePassword("Ivy", "1091008");
+        User updatedUser = ur.findByUsername("Ivy");
+        assertTrue(success);
+        assertEquals("1091008", updatedUser.getPassword());
     }
 
     @Test
     void TestDeleteUser(){
-        User user = us.updatePassword("Mark", "123456");
-        ur.save(user);
-        us.deleteUser("Mark");
+//        User user = us.updatePassword("Mark", "123456");
+//        ur.save(user);
+        us.deleteUser("John", "876543");
     }
 }

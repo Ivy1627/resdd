@@ -1,5 +1,6 @@
 package itlize.resourcemanagement.repository;
 
+import itlize.resourcemanagement.entity.Resource;
 import itlize.resourcemanagement.entity.ResourceAttributes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,5 +12,7 @@ public interface ResourceAttributesRepo extends JpaRepository<ResourceAttributes
     // for locating a blank in the table
     boolean existsByColNameAndColVal(String colName, String colVal);
     boolean existsByColName(String colName);
+
+    ResourceAttributes findByRes(Resource res);
     List<ResourceAttributes> findAllByColName(String ColName);
 }

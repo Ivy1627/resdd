@@ -14,10 +14,16 @@ public class ResourceAttributesServiceImpl implements ResourceAttributesService 
     @Autowired
     private ResourceAttributesRepo rap;
 
-//    @Override
-//    public boolean createColName(String colName){
-//
-//    }
+    @Override
+    public boolean createColName(String colName){
+        if(rap.existsByColName(colName)){
+            return false;
+        }
+        ResourceAttributes ra = new ResourceAttributes();
+        ra.setColName(colName);
+        rap.save(ra);
+        return true;
+    }
 
     @Override
     public boolean createColVal(ResourceAttributes resAttr, Resource res, String colName, String colVal){
@@ -33,13 +39,14 @@ public class ResourceAttributesServiceImpl implements ResourceAttributesService 
     }
 
     @Override
-    public ResourceAttributes updateResourceAttributes(ResourceAttributes resAttr, String colVal){
+    public ResourceAttributes updateResourceAttributes(Resource res, String colVal){
+        ResourceAttributes resAttr = rap.findByRes(res);
         resAttr.setColVal(colVal);
         return rap.save(resAttr);
     }
 
     @Override
-    public boolean deleteColName(ResourceAttributes resAttr, String colName){
+    public boolean deleteColName(String colName){
         // Find all ResourceAttributes entries with the specified colName
         List<ResourceAttributes> entriesToDelete = rap.findAllByColName(colName);
         // Check if entries with the specified colName exist

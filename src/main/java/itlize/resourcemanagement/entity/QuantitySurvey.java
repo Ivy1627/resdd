@@ -1,5 +1,6 @@
 package itlize.resourcemanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 @Entity
 @Table(name = "quantity_surveys")
@@ -7,6 +8,7 @@ public class QuantitySurvey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private Long id;
 
     public enum Type {
@@ -39,7 +41,7 @@ public class QuantitySurvey {
         this.colName = colName;
     }
 
-    public void setProject(Project proj) {
+    public void setProj(Project proj) {
         this.proj = proj;
     }
 
@@ -57,5 +59,9 @@ public class QuantitySurvey {
 
     public void setType(Type type){
         this.type = type;
+    }
+
+    public Project getProject() {
+        return this.proj;
     }
 }

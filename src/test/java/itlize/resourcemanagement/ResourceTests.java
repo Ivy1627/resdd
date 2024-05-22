@@ -1,15 +1,18 @@
 package itlize.resourcemanagement;
 
+import itlize.resourcemanagement.entity.Project;
 import itlize.resourcemanagement.entity.Resource;
 import itlize.resourcemanagement.entity.User;
 import itlize.resourcemanagement.repository.ProjectRepo;
 import itlize.resourcemanagement.repository.ResourceRepo;
+import itlize.resourcemanagement.repository.UserRepo;
 import itlize.resourcemanagement.service.ProjectService;
 import itlize.resourcemanagement.service.ResourceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +24,10 @@ public class ResourceTests {
     private ResourceRepo rr;
     @Autowired
     private ResourceService rs;
+    @Autowired
+    private ProjectRepo pr;
+    @Autowired
+    private UserRepo ur;
 
     @Test
     void testCreateResource(){
@@ -63,5 +70,12 @@ public class ResourceTests {
         rs.deleteResource(res);
         Resource deletedResource = rr.findByResName(res.getResName()).orElse(null);
         assertNull(deletedResource, "Resource should be deleted");
+    }
+
+    @Test
+    void testAddToProject(){
+        Project project = pr.findByProjNameAndUser("Project 1", ur.findByUsername("Ivy")).orElse(null);
+        List<Resource> resources = rr.findAllWithAttr();
+        rs.addToProject(project, resources);
     }
 }
