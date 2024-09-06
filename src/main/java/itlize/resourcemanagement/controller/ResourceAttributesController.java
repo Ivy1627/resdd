@@ -14,6 +14,7 @@ public class ResourceAttributesController {
     @Autowired
     private ResourceAttributesService ras;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/create/{colName}")
     public ResponseEntity<String> createColName(@PathVariable String colName){
         boolean success = ras.createColName(colName);
@@ -23,6 +24,7 @@ public class ResourceAttributesController {
         return new ResponseEntity<String>("attribute already exists", HttpStatus.CONFLICT);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/create/{colName}/{colVal}")
     public ResponseEntity<String> createColVal(@RequestBody Resource res, @PathVariable String colName, @PathVariable String colVal){
         boolean success = ras.createColVal(res.getResAttributes().getFirst(), res, colName, colVal);
@@ -32,6 +34,7 @@ public class ResourceAttributesController {
         return new ResponseEntity<String>("colVal already exists", HttpStatus.CONFLICT);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/delete/{colName}")
     public ResponseEntity<String> deleteCol(@PathVariable String colName){
         boolean success = ras.deleteColName(colName);

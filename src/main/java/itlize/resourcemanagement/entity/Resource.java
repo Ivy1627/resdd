@@ -10,11 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "resources")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Add this annotation
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonIgnore
     private Long id;
 
     @Column(name = "res_name", unique = true)

@@ -32,7 +32,8 @@ public class ProjectTests {
         assertTrue(result);
 
         // Verify that the res was saved
-        Project savedProj = pr.findByProjName("Project 5").orElse(null);
+
+
         assertNotNull(savedProj);
         assertEquals("Project 5", savedProj.getProjName());
 

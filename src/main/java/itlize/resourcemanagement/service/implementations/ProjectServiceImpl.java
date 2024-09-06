@@ -56,8 +56,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project displayProject(User user, String projName) {
-        return pr.findByProjNameAndUser(projName, user).orElse(null);
+    public Project displayProject(User user, Long projId) {
+        return pr.findByIdAndUser(projId, user).orElse(null);
     }
 
 

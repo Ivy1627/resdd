@@ -24,6 +24,7 @@ public class QuantitySurveyController {
     @Autowired
     private ProjectRepo pr;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/create/{username}/{projName}")
     public ResponseEntity<String> createField(@PathVariable String username, @PathVariable String projName, @RequestBody QuantitySurvey qs){
         User user = ur.findByUsername(username);
@@ -39,6 +40,7 @@ public class QuantitySurveyController {
         return new ResponseEntity<String>("field exists", HttpStatus.CONFLICT);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/delete/{username}/{projName}/{fieldName}")
     public ResponseEntity<String> deleteField(@PathVariable String username, @PathVariable String projName, @PathVariable String fieldName){
         User user = ur.findByUsername(username);
@@ -52,6 +54,7 @@ public class QuantitySurveyController {
         return new ResponseEntity<String>("field exists", HttpStatus.CONFLICT);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/display/{username}/{projName}")
     public List<QuantitySurvey> displayTable(@PathVariable String username, @PathVariable String projName){
         return (qss.displayTable(username, projName));

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public boolean createResource(Resource res){
-        if (rr.existsByResNameOrResCode(res.getResName(), res.getResCode())) {
+        if (rr.existsByResName(res.getResName())) {
             return false;
         }
         rr.save(res);
@@ -52,16 +53,33 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public void addToProject(Project project, List<Resource> resources) {
         for (Resource resource : resources) {
-            resource.getProjects().add(project);
+            resource = rr.findById(resource.getId()).orElse(null);
+            project = pr.findById(project.getId()).orElse(null);
+            assert project != null;
+            project.getResources().add(resource);
+            assert resource != null;
             rr.save(resource);
+            resource.getProjects().add(project);
+            pr.save(project);
         }
+//        pr.save(project);
+//        rr.saveAll(resources);
+        System.out.println(Arrays.toString(project.getResources().toArray()));
     }
 
     @Override
     public void deleteFromProject(Project project, List<Resource> resources) {
+        System.out.println("debug deleteFromProject");
         for (Resource resource : resources) {
-            resource.getProjects().remove(project);
+            resource = rr.findById(resource.getId()).orElse(null);
+            project = pr.findById(project.getId()).orElse(null);
+            assert project != null;
+            project.getResources().remove(resource);
+            assert resource != null;
+            System.out.println(resource.getId());
             rr.save(resource);
+            resource.getProjects().remove(project);
+            pr.save(project);
         }
     }
 }

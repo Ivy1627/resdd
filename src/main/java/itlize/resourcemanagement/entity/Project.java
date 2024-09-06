@@ -10,11 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "projects")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonIgnore
     private Long id;
 
     @Column(name = "proj_name")
@@ -50,5 +50,9 @@ public class Project {
 
     public void setResources(Set<Resource> resources){
         this.resources = resources;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 }

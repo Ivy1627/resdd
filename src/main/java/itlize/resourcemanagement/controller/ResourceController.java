@@ -3,6 +3,7 @@ package itlize.resourcemanagement.controller;
 import itlize.resourcemanagement.entity.Project;
 import itlize.resourcemanagement.entity.Resource;
 import itlize.resourcemanagement.entity.User;
+import itlize.resourcemanagement.exception.ResourceNotFoundException;
 import itlize.resourcemanagement.repository.ProjectRepo;
 import itlize.resourcemanagement.repository.ResourceRepo;
 import itlize.resourcemanagement.repository.UserRepo;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/resource")
@@ -26,6 +28,7 @@ public class ResourceController {
     @Autowired
     private UserRepo ur;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/all")
     public ResponseEntity<List<Resource>> listAll(){
         List<Resource> resources = rs.listAll();
@@ -35,34 +38,70 @@ public class ResourceController {
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/all/{userId}/{projId}")
+    public ResponseEntity<List<Resource>> listFromProject(@PathVariable Long userId, @PathVariable Long projId) {
+        User user = ur.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+        Project project = pr.findByIdAndUser(projId, user).orElseThrow(() -> new ResourceNotFoundException("Project not found with ID: " + projId + " for user: " + userId));
+
+        List<Resource> resources = rr.findResourcesByUserAndProject(userId, projId);
+        return new ResponseEntity<>(resources, HttpStatus.OK);
+//        User user = ur.findById(userId).orElse(null);
+//        if (user == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        Project project = pr.findByIdAndUser(projId, user).orElse(null);
+//        if (project == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        List<Resource> resources = rr.findResourcesByUserAndProject(userId, projId);
+//        return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody Resource res){
+    public ResponseEntity<Resource> add(@RequestBody Resource res){
         boolean success = rs.createResource(res);
         if(success){
-            return new ResponseEntity<String>("New resource created", HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         }
-        return new ResponseEntity<String>("Resource exists", HttpStatus.CONFLICT);
+        return new ResponseEntity<>(res, HttpStatus.CONFLICT);
     }
 
-    @PostMapping("/addTo/{username}/{projName}")
-    public ResponseEntity<String> addTo(@PathVariable String username, @PathVariable String projName, @RequestBody List<Resource> resources){
-        User user = ur.findByUsername(username);
-        Project project = pr.findByProjNameAndUser(projName, user).orElse(null);
-        if(project==null){
-            return new ResponseEntity<String>("Project does not exist", HttpStatus.NOT_FOUND);
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/addTo/{userId}/{projId}")
+    public ResponseEntity<List<Resource>> addTo(@PathVariable Long userId, @PathVariable Long projId, @RequestBody List<Resource> resources){
+//        System.out.println(STR."Received userId: \{userId}");
+//        System.out.println(STR."Received projId: \{projId}");
+//        System.out.println(STR."Received resources: \{resources}");
+
+        User user = ur.findById(userId).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Project project = pr.findByIdAndUser(projId, user).orElse(null);
+        if (project == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         rs.addToProject(project, resources);
-        return new ResponseEntity<String>("Resource added to project", HttpStatus.OK);
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
-    @PostMapping("/deleteFrom/{username}/{projName}")
-    public ResponseEntity<String> deleteFrom(@PathVariable String username, @PathVariable String projName, @RequestBody List<Resource> resources){
-        Project project = pr.findByProjNameAndUser(projName, ur.findByUsername(username)).orElse(null);
+    @CrossOrigin(origins = "http://localhost:4200")
+    @DeleteMapping("/deleteFrom/{userId}/{projId}")
+    public ResponseEntity<List<Resource>> deleteFrom(@PathVariable Long userId, @PathVariable Long projId, @RequestBody List<Resource> resources){
+        User user = ur.findById(userId).orElse(null);
+        assert user != null;
+        Project project = pr.findByIdAndUser(projId, user).orElse(null);
         if(project==null){
-            return new ResponseEntity<String>("Project does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         rs.deleteFromProject(project, resources);
-        return new ResponseEntity<String>("Resource deleted from the project", HttpStatus.OK);
+        return new ResponseEntity<>(resources, HttpStatus.OK);
     }
 
     // this should be in resourceAttributes
@@ -75,12 +114,13 @@ public class ResourceController {
 //        return new ResponseEntity<String>("Resource exists", HttpStatus.CONFLICT);
 //    }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/delete")
     public ResponseEntity<String> delete(@RequestBody Resource res){
         boolean success = rs.deleteResource(res);
         if(success){
-            return new ResponseEntity<String>("resource deleted", HttpStatus.OK);
+            return new ResponseEntity<>("resource deleted", HttpStatus.OK);
         }
-        return new ResponseEntity<String>("Resource does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Resource does not exist", HttpStatus.NOT_FOUND);
     }
 }

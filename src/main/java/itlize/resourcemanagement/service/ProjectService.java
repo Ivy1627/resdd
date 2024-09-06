@@ -14,5 +14,5 @@ public interface ProjectService {
 
     public List<Project> listAll(User user);
 
-    public Project displayProject(User user, String projName);
+    public Project displayProject(User user, Long projId);
 }
